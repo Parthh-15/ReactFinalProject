@@ -36,14 +36,14 @@ export const StorageTelemetryHUD = () => {
   const latestLatency = latestLog ? `${latestLog.latencyMs} ms` : '0 ms';
 
   return (
-    <div className="bg-[#101014] border-t border-[#2e2e38] text-white flex flex-col h-64">
+    <div className="bg-app-header border-t text-white flex flex-col h-64">
       {/* HUD Telemetry Strip */}
-      <div className="grid grid-cols-4 border-b border-[#2e2e38] divide-x divide-[#2e2e38] bg-[#16161b]">
+      <div className="grid grid-cols-4 divide-x bg-app-bar" style={{ borderBottom: '1px solid #2e2e38' }}>
         {/* Metric 1 */}
         <div className="p-3 flex items-center gap-3">
-          <HardDrive className="w-5 h-5 text-emerald-400 shrink-0" />
+          <HardDrive style={{ width: '1.25rem', height: '1.25rem', color: '#34d399', flexShrink: 0 }} />
           <div>
-            <div className="text-[10px] uppercase text-zinc-400 font-semibold tracking-wider">
+            <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#a1a1aa', fontWeight: 600, letterSpacing: '0.05em' }}>
               Total Calculated Weight
             </div>
             <div className="times-12 font-bold text-emerald-400 font-mono">
@@ -54,9 +54,9 @@ export const StorageTelemetryHUD = () => {
 
         {/* Metric 2 */}
         <div className="p-3 flex items-center gap-3">
-          <Activity className="w-5 h-5 text-cyan-400 shrink-0" />
+          <Activity style={{ width: '1.25rem', height: '1.25rem', color: '#22d3ee', flexShrink: 0 }} />
           <div>
-            <div className="text-[10px] uppercase text-zinc-400 font-semibold tracking-wider">
+            <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#a1a1aa', fontWeight: 600, letterSpacing: '0.05em' }}>
               Remaining Quota Margin
             </div>
             <div className="times-12 font-bold text-cyan-400 font-mono">
@@ -67,9 +67,9 @@ export const StorageTelemetryHUD = () => {
 
         {/* Metric 3 */}
         <div className="p-3 flex items-center gap-3">
-          <Cpu className="w-5 h-5 text-violet-400 shrink-0" />
+          <Cpu style={{ width: '1.25rem', height: '1.25rem', color: '#a78bfa', flexShrink: 0 }} />
           <div>
-            <div className="text-[10px] uppercase text-zinc-400 font-semibold tracking-wider">
+            <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#a1a1aa', fontWeight: 600, letterSpacing: '0.05em' }}>
               Execution Latency
             </div>
             <div className="times-12 font-bold text-violet-400 font-mono">
@@ -81,9 +81,9 @@ export const StorageTelemetryHUD = () => {
         {/* Metric 4 */}
         <div className="p-3 flex items-center gap-3 justify-between">
           <div className="flex items-center gap-3">
-            <Terminal className="w-5 h-5 text-amber-400 shrink-0" />
+            <Terminal style={{ width: '1.25rem', height: '1.25rem', color: '#fbbf24', flexShrink: 0 }} />
             <div>
-              <div className="text-[10px] uppercase text-zinc-400 font-semibold tracking-wider">
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#a1a1aa', fontWeight: 600, letterSpacing: '0.05em' }}>
                 Active Index Edges
               </div>
               <div className="times-12 font-bold text-amber-400 font-mono">
@@ -94,29 +94,30 @@ export const StorageTelemetryHUD = () => {
 
           <button
             onClick={handleDownloadDump}
-            className="times-12 flex items-center gap-1 px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded text-xs transition"
+            className="times-12 flex items-center gap-1 px-2-5 py-1 bg-zinc-800 text-zinc-300 rounded text-xs transition"
+            style={{ cursor: 'pointer' }}
             title="Download DB Schema Dump"
           >
-            <Download className="w-3.5 h-3.5" /> Dump
+            <Download style={{ width: '0.875rem', height: '0.875rem' }} /> Dump
           </button>
         </div>
       </div>
 
       {/* Terminal logs panel */}
-      <div className="flex-1 flex flex-col min-h-0 bg-[#0c0c0e]">
-        <div className="p-2 bg-[#121216] border-b border-[#222] flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-semibold uppercase">
-            <Terminal className="w-3.5 h-3.5 text-amber-400" />
+      <div className="flex-1 flex flex-col min-h-0 bg-app-dark">
+        <div className="p-2 bg-app-terminal flex items-center justify-between" style={{ borderBottom: '1px solid #18181f' }}>
+          <div className="flex items-center gap-1-5 text-xs text-zinc-400 font-semibold uppercase">
+            <Terminal style={{ width: '0.875rem', height: '0.875rem', color: '#fbbf24' }} />
             <span>Telemetry Transaction Log Terminal</span>
           </div>
-          <span className="text-[10px] text-zinc-500 font-mono">
+          <span style={{ fontSize: '10px', color: '#71717a', fontFamily: "'JetBrains Mono', monospace" }}>
             SYS_VOLUMETRIC_MONITOR_ON
           </span>
         </div>
 
-        <div className="flex-1 p-3 font-mono text-[11px] text-zinc-300 overflow-y-auto space-y-1 scrollbar-thin">
+        <div className="flex-1 p-3 font-mono overflow-y-auto space-y-1" style={{ fontSize: '11px', color: '#d4d4d8' }}>
           {telemetryLogs.map((log, index) => (
-            <div key={index} className="flex items-start gap-2 border-b border-[#18181f]/40 pb-1">
+            <div key={index} className="flex items-start gap-2 pb-1" style={{ borderBottom: '1px solid rgba(24,24,31,0.4)' }}>
               <span className="text-zinc-500 select-none">[{log.timestamp}]</span>
               <span className="font-bold text-emerald-400">{log.action}</span>
               <span className="text-zinc-400">target:</span>

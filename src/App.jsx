@@ -21,32 +21,32 @@ function App() {
   }, [refreshSchemaStructure]);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-[#0c0c0e]">
+    <div className="flex flex-col h-screen overflow-hidden bg-app-dark">
       {/* Admin Console Header */}
-      <header className="bg-[#101014] border-b border-[#2e2e38] px-4 py-3 flex items-center justify-between shadow-md select-none shrink-0">
+      <header className="bg-app-header border-b px-4 py-3 flex items-center justify-between shadow-md select-none shrink-0">
         <div className="flex items-center gap-3">
-          <div className="p-1.5 bg-emerald-950/60 rounded border border-emerald-800/40">
-            <Database className="w-5 h-5 text-emerald-400" />
+          <div style={{ padding: '0.375rem', backgroundColor: 'rgba(6,78,59,0.6)', borderRadius: '0.25rem', border: '1px solid rgba(6,78,59,0.4)' }}>
+            <Database style={{ width: '1.25rem', height: '1.25rem', color: '#34d399' }} />
           </div>
           <div>
             <h1 className="text-sm font-bold tracking-wider text-emerald-400 uppercase">
               Web Storage Local Database Schema Explorer
             </h1>
-            <p className="text-[10px] text-zinc-500 font-mono tracking-tight">
-              Sandboxed Client-Side Relational Engine & Volumetric Analyzer
+            <p style={{ fontSize: '10px', color: '#71717a', fontFamily: "'JetBrains Mono', monospace", letterSpacing: '-0.025em' }}>
+              Sandboxed Client-Side Relational Engine &amp; Volumetric Analyzer
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-4 text-xs font-mono">
-          <div className="flex items-center gap-1.5 text-zinc-400 bg-[#16161b] px-2.5 py-1 rounded border border-[#23232a]">
-            <Cpu className="w-3.5 h-3.5 text-violet-400 animate-pulse" />
+          <div className="flex items-center gap-1-5 text-zinc-400 bg-app-bar px-2-5 py-1 rounded border border-app-panel">
+            <Cpu style={{ width: '0.875rem', height: '0.875rem', color: '#a78bfa', animation: 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite' }} />
             <span>Driver status:</span>
             <span className="text-emerald-400 font-bold">ONLINE (100% Client-Side)</span>
           </div>
 
           <div className="flex items-center gap-1 text-zinc-500">
-            <ShieldAlert className="w-3.5 h-3.5 text-amber-500" />
+            <ShieldAlert style={{ width: '0.875rem', height: '0.875rem', color: '#f59e0b' }} />
             <span>Zero Server Overhead / Secure Sandbox</span>
           </div>
         </div>

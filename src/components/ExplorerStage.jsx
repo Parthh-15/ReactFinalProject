@@ -23,19 +23,20 @@ export const ExplorerStage = () => {
   const currentDb = databases.find((d) => d.type === activeDbType && d.name === activeDbName);
 
   return (
-    <div className="flex-1 flex overflow-hidden bg-[#141417] text-white">
+    <div className="flex-1 flex overflow-hidden bg-app-base text-white">
       {/* SchemaObjectTreeNavigator (Left Pane) */}
-      <div className="w-80 border-r border-[#2e2e38] flex flex-col bg-[#1a1a20]">
-        <div className="p-3 border-b border-[#2e2e38] flex items-center justify-between">
+      <div className="w-80 flex flex-col bg-app-sidebar" style={{ borderRight: '1px solid #2e2e38' }}>
+        <div className="p-3 flex items-center justify-between" style={{ borderBottom: '1px solid #2e2e38' }}>
           <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
             Schema Navigator
           </span>
           <button 
             onClick={refreshRecords}
-            className="p-1 hover:bg-[#2e2e38] rounded text-zinc-400 hover:text-emerald-400 transition"
+            className="p-1 rounded text-zinc-400 transition"
+            style={{ cursor: 'pointer' }}
             title="Refresh active store records"
           >
-            <RefreshCw className="w-3.5 h-3.5" />
+            <RefreshCw style={{ width: '0.875rem', height: '0.875rem' }} />
           </button>
         </div>
         
@@ -64,21 +65,22 @@ export const ExplorerStage = () => {
       {/* Database Staging workspace / right canvas */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Toggle Workspace View */}
-        <div className="border-b border-[#2e2e38] bg-[#1a1a20] px-4 py-2 flex items-center justify-between">
+        <div className="bg-app-sidebar px-4 py-2 flex items-center justify-between" style={{ borderBottom: '1px solid #2e2e38' }}>
           <div className="flex items-center gap-2">
             <span className="text-emerald-400 font-semibold text-xs tracking-widest uppercase">
               {activeDbName ? `${activeDbName} > ${activeStoreName || 'Select Store'}` : 'Select Database'}
             </span>
           </div>
 
-          <div className="flex rounded p-0.5 bg-[#23232a] border border-[#2e2e38]">
+          <div className="flex rounded bg-app-panel p-1-5" style={{ border: '1px solid #2e2e38' }}>
             <button
               onClick={() => setActiveTab('spreadsheet')}
               className={`times-12 px-3 py-1 rounded transition text-xs ${
                 activeTab === 'spreadsheet'
                   ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'text-zinc-400 hover:text-white'
+                  : 'text-zinc-400'
               }`}
+              style={{ cursor: 'pointer' }}
             >
               Spreadsheet Data Grid
             </button>
@@ -87,16 +89,17 @@ export const ExplorerStage = () => {
               className={`times-12 px-3 py-1 rounded transition text-xs flex items-center gap-1 ${
                 activeTab === 'schema-graph'
                   ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'text-zinc-400 hover:text-white'
+                  : 'text-zinc-400'
               }`}
+              style={{ cursor: 'pointer' }}
             >
-              <Layers className="w-3 h-3" /> Relationship Graph
+              <Layers style={{ width: '0.75rem', height: '0.75rem' }} /> Relationship Graph
             </button>
           </div>
         </div>
 
         {/* Dynamic Inner Panel */}
-        <div className="flex-1 overflow-auto bg-[#141417]">
+        <div className="flex-1 overflow-auto bg-app-base">
           {activeTab === 'spreadsheet' ? (
             <DatabaseDataMatrixSpreadsheet
               records={filteredRecords}
@@ -128,17 +131,17 @@ const DatabaseNode = ({ db, activeDbName, activeStoreName, setActiveDbName, setA
           setActiveDbName(db.name);
           setExpanded(!expanded);
         }}
-        className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer transition ${
-          isSelected ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-300 hover:bg-zinc-850'
+        className={`flex items-center gap-1-5 p-1-5 rounded cursor-pointer transition ${
+          isSelected ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-300 bg-zinc-850'
         }`}
       >
-        {expanded ? <ChevronDown className="w-4 h-4 text-zinc-500" /> : <ChevronRight className="w-4 h-4 text-zinc-500" />}
+        {expanded ? <ChevronDown style={{ width: '1rem', height: '1rem', color: '#71717a' }} /> : <ChevronRight style={{ width: '1rem', height: '1rem', color: '#71717a' }} />}
         <span className="times-12 font-bold select-none">{db.name}</span>
-        {db.error && <span className="text-[10px] text-rose-500 font-serif">(! error)</span>}
+        {db.error && <span style={{ fontSize: '10px', color: '#f43f5e', fontFamily: 'serif' }}>(! error)</span>}
       </div>
 
       {expanded && (
-        <div className="pl-6 space-y-1 mt-1 border-l border-zinc-800 ml-3.5">
+        <div className="pl-6 space-y-1 mt-1 ml-3-5" style={{ borderLeft: '1px solid #3f3f46' }}>
           {db.stores?.map((store) => {
             const isStoreSelected = activeStoreName === store.name && isSelected;
             return (
@@ -148,28 +151,29 @@ const DatabaseNode = ({ db, activeDbName, activeStoreName, setActiveDbName, setA
                     setActiveDbName(db.name);
                     setActiveStoreName(store.name);
                   }}
-                  className={`flex items-center justify-between p-1.5 rounded cursor-pointer transition ${
-                    isStoreSelected ? 'bg-emerald-900/40 text-emerald-300 border border-emerald-800/40' : 'text-zinc-400 hover:bg-[#23232a]'
+                  className={`flex items-center justify-between p-1-5 rounded cursor-pointer transition ${
+                    isStoreSelected ? 'bg-emerald-selected text-emerald-300 border-emerald-faint' : 'text-zinc-400'
                   }`}
+                  style={isStoreSelected ? { border: '1px solid rgba(6,78,59,0.4)' } : {}}
                 >
-                  <div className="flex items-center gap-1.5">
-                    <Table className="w-3.5 h-3.5 text-zinc-500" />
+                  <div className="flex items-center gap-1-5">
+                    <Table style={{ width: '0.875rem', height: '0.875rem', color: '#71717a' }} />
                     <span className="times-12">{store.name}</span>
                   </div>
                 </div>
 
                 {isStoreSelected && (
-                  <div className="pl-5 pr-1 py-1 space-y-1 text-zinc-500 border-l border-zinc-700/60 ml-2">
-                    <div className="flex items-center gap-1.5 text-[11px] font-mono">
-                      <Key className="w-3 h-3 text-amber-500" />
+                  <div className="pl-5 pr-1 py-1 space-y-1 text-zinc-500 ml-2" style={{ borderLeft: '1px solid rgba(63,63,70,0.6)' }}>
+                    <div className="flex items-center gap-1-5 text-xs font-mono">
+                      <Key style={{ width: '0.75rem', height: '0.75rem', color: '#f59e0b' }} />
                       <span className="times-12 text-zinc-400">PK: {String(store.keyPath)}</span>
                     </div>
                     {store.fields?.map((field) => (
-                      <div key={field} className="flex items-center justify-between text-[11px] font-mono hover:text-zinc-300 transition pl-1">
+                      <div key={field} className="flex items-center justify-between text-xs font-mono pl-1" style={{ transition: 'color 0.15s' }}>
                         <span className="times-12 text-zinc-500">{field}</span>
                         {/* FK indicator if field name matches id pattern */}
                         {/^(.*)(?:Id|_id|ID)$/.test(field) && (
-                          <LinkIcon className="w-2.5 h-2.5 text-blue-500" title="Relationship Candidate" />
+                          <LinkIcon style={{ width: '0.625rem', height: '0.625rem', color: '#3b82f6' }} title="Relationship Candidate" />
                         )}
                       </div>
                     ))}
@@ -202,7 +206,7 @@ const DatabaseDataMatrixSpreadsheet = ({
   if (!dbName || !storeName) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-zinc-500 text-sm">
-        <Table className="w-12 h-12 text-zinc-600 mb-2" />
+        <Table style={{ width: '3rem', height: '3rem', color: '#52525b', marginBottom: '0.5rem' }} />
         Please select a table/store from the Schema Navigator to explore records.
       </div>
     );
@@ -289,34 +293,49 @@ const DatabaseDataMatrixSpreadsheet = ({
         </span>
         <button
           onClick={() => setShowAddRow(true)}
-          className="times-12 flex items-center gap-1.5 px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs transition"
+          className="times-12 flex items-center gap-1-5 px-3 py-1 bg-emerald-600 text-white rounded text-xs transition"
+          style={{ cursor: 'pointer' }}
         >
-          <Plus className="w-3.5 h-3.5" /> Add Record
+          <Plus style={{ width: '0.875rem', height: '0.875rem' }} /> Add Record
         </button>
       </div>
 
       {/* Add Row Section */}
       {showAddRow && (
-        <div className="bg-[#1e1e24] border border-[#2e2e38] rounded p-4 mb-4">
+        <div className="bg-app-surface rounded p-4 mb-4" style={{ border: '1px solid #2e2e38' }}>
           <h4 className="text-emerald-400 font-bold text-xs uppercase mb-2">Insert New Row (JSON schema format)</h4>
           <form onSubmit={handleAddRowSubmit} className="space-y-3">
             <textarea
               value={newRowPayload}
               onChange={(e) => setNewRowPayload(e.target.value)}
               rows={5}
-              className="w-full font-mono text-xs bg-[#141417] border border-[#2e2e38] rounded p-2 text-emerald-300 focus:outline-emerald-500"
+              style={{
+                width: '100%',
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '0.75rem',
+                backgroundColor: '#141417',
+                border: '1px solid #2e2e38',
+                borderRadius: '0.25rem',
+                padding: '0.5rem',
+                color: '#6ee7b7',
+                outline: 'none',
+                resize: 'none',
+                boxSizing: 'border-box',
+              }}
             />
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setShowAddRow(false)}
-                className="times-12 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs rounded"
+                className="times-12 px-3 py-1-5 bg-zinc-800 text-zinc-300 text-xs rounded"
+                style={{ cursor: 'pointer' }}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="times-12 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded"
+                className="times-12 px-3 py-1-5 bg-emerald-600 text-white text-xs rounded"
+                style={{ cursor: 'pointer' }}
               >
                 Insert Record
               </button>
@@ -326,13 +345,13 @@ const DatabaseDataMatrixSpreadsheet = ({
       )}
 
       {/* Spreadsheet grid table */}
-      <div className="overflow-x-auto border border-[#2e2e38] rounded">
+      <div className="overflow-x-auto rounded" style={{ border: '1px solid #2e2e38' }}>
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="bg-[#1a1a20] border-b border-[#2e2e38]">
-              <th className="times-12 p-2 text-zinc-500 font-semibold border-r border-[#2e2e38] w-12 text-center">#</th>
+            <tr className="bg-app-sidebar" style={{ borderBottom: '1px solid #2e2e38' }}>
+              <th className="times-12 p-2 text-zinc-500 font-semibold w-12 text-center" style={{ borderRight: '1px solid #2e2e38' }}>#</th>
               {columnsList.map((col) => (
-                <th key={col} className="times-12 p-2 text-zinc-300 font-bold border-r border-[#2e2e38] select-none">
+                <th key={col} className="times-12 p-2 text-zinc-300 font-bold select-none" style={{ borderRight: '1px solid #2e2e38' }}>
                   {col}
                 </th>
               ))}
@@ -344,8 +363,8 @@ const DatabaseDataMatrixSpreadsheet = ({
               const recordId = record.__id;
               
               return (
-                <tr key={recordId || rowIndex} className="border-b border-[#2e2e38] hover:bg-[#1b1b21] transition">
-                  <td className="times-12 p-2 text-zinc-500 text-center border-r border-[#2e2e38] font-mono select-none">
+                <tr key={recordId || rowIndex} className="transition" style={{ borderBottom: '1px solid #2e2e38' }}>
+                  <td className="times-12 p-2 text-zinc-500 text-center font-mono select-none" style={{ borderRight: '1px solid #2e2e38' }}>
                     {rowIndex + 1}
                   </td>
                   
@@ -371,10 +390,11 @@ const DatabaseDataMatrixSpreadsheet = ({
                           setEditingCell({ rowIndex, key: col });
                           setEditingValue(displayVal);
                         }}
-                        className="times-12 p-2 border-r border-[#2e2e38] max-w-xs truncate relative group/cell cursor-pointer min-h-[36px]"
+                        className="times-12 p-2 max-w-xs truncate relative cursor-pointer"
+                        style={{ borderRight: '1px solid #2e2e38', minHeight: '36px' }}
                       >
                         {isEditing ? (
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1-5">
                             <textarea
                               value={editingValue}
                               onChange={(e) => setEditingValue(e.target.value)}
@@ -386,14 +406,25 @@ const DatabaseDataMatrixSpreadsheet = ({
                                 }
                               }}
                               autoFocus
-                              className="w-full p-1 bg-[#141417] border border-emerald-500 text-emerald-300 text-xs font-mono rounded resize-none"
+                              style={{
+                                width: '100%',
+                                padding: '0.25rem',
+                                backgroundColor: '#141417',
+                                border: '1px solid #10b981',
+                                color: '#6ee7b7',
+                                fontSize: '0.75rem',
+                                fontFamily: "'JetBrains Mono', monospace",
+                                borderRadius: '0.25rem',
+                                resize: 'none',
+                                outline: 'none',
+                              }}
                               rows={2}
                             />
                           </div>
                         ) : (
                           <div className="flex items-center justify-between">
                             <span className="font-mono">{displayVal}</span>
-                            <Edit3 className="w-3 h-3 text-zinc-600 opacity-0 group-hover/cell:opacity-100 transition absolute right-2" />
+                            <Edit3 style={{ width: '0.75rem', height: '0.75rem', color: '#52525b', position: 'absolute', right: '0.5rem' }} />
                           </div>
                         )}
                       </td>
@@ -403,10 +434,11 @@ const DatabaseDataMatrixSpreadsheet = ({
                   <td className="p-2 text-center">
                     <button
                       onClick={() => deleteRecord(recordId)}
-                      className="times-12 p-1 hover:bg-rose-950/40 text-rose-500 hover:text-rose-400 rounded transition"
+                      className="times-12 p-1 text-rose-500 rounded transition"
+                      style={{ cursor: 'pointer' }}
                       title="Delete this row"
                     >
-                      <Trash2 className="w-3.5 h-3.5 inline" />
+                      <Trash2 style={{ width: '0.875rem', height: '0.875rem', display: 'inline' }} />
                     </button>
                   </td>
                 </tr>
@@ -416,7 +448,7 @@ const DatabaseDataMatrixSpreadsheet = ({
             {records.length === 0 && (
               <tr>
                 <td colSpan={columnsList.length + 2} className="times-12 p-8 text-center text-zinc-500 italic">
-                  No records loaded. Double-click or click "Add Record" to populate records.
+                  No records loaded. Double-click or click &ldquo;Add Record&rdquo; to populate records.
                 </td>
               </tr>
             )}
@@ -439,7 +471,7 @@ const SchemaRelationshipGraph = ({ relationships, activeDbName }) => {
   if (filteredNodes.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-zinc-500 text-sm">
-        <LinkIcon className="w-12 h-12 text-zinc-600 mb-2" />
+        <LinkIcon style={{ width: '3rem', height: '3rem', color: '#52525b', marginBottom: '0.5rem' }} />
         No nodes found to visualize. Connect databases or create stores to map schema keys.
       </div>
     );
@@ -459,13 +491,13 @@ const SchemaRelationshipGraph = ({ relationships, activeDbName }) => {
   });
 
   return (
-    <div className="p-6 flex flex-col items-center justify-center bg-[#141417]">
+    <div className="p-6 flex flex-col items-center justify-center bg-app-base">
       <h3 className="text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-4">
         Interactive Relational Mapping Canvas ({filteredEdges.length} connections detected)
       </h3>
 
-      <div className="w-full max-w-2xl bg-[#1a1a20] border border-[#2e2e38] rounded-lg p-4 relative overflow-hidden">
-        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
+      <div className="w-full max-w-2xl bg-app-sidebar rounded-lg p-4 relative overflow-hidden" style={{ border: '1px solid #2e2e38' }}>
+        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
           {/* Arrow markers for edges */}
           <defs>
             <marker
@@ -498,7 +530,7 @@ const SchemaRelationshipGraph = ({ relationships, activeDbName }) => {
                   strokeWidth="2"
                   strokeDasharray="4"
                   markerEnd="url(#arrow)"
-                  className="opacity-70 animate-pulse"
+                  style={{ opacity: 0.7 }}
                 />
                 {/* Edge Label */}
                 <text
@@ -508,7 +540,7 @@ const SchemaRelationshipGraph = ({ relationships, activeDbName }) => {
                   fontSize="10"
                   fontFamily="Times New Roman"
                   textAnchor="middle"
-                  className="bg-[#141417] px-1 font-bold"
+                  fontWeight="bold"
                 >
                   {edge.sourceField} → {edge.targetField}
                 </text>
@@ -522,7 +554,7 @@ const SchemaRelationshipGraph = ({ relationships, activeDbName }) => {
             if (!pos) return null;
 
             return (
-              <g key={node.id} transform={`translate(${pos.x}, ${pos.y})`} className="cursor-pointer">
+              <g key={node.id} transform={`translate(${pos.x}, ${pos.y})`} style={{ cursor: 'pointer' }}>
                 <rect
                   x="-75"
                   y="-25"
@@ -532,7 +564,6 @@ const SchemaRelationshipGraph = ({ relationships, activeDbName }) => {
                   fill="#1e1e24"
                   stroke="#3e3e4a"
                   strokeWidth="2"
-                  className="hover:stroke-emerald-400 hover:fill-[#25252e] transition"
                 />
                 {/* Table Header text */}
                 <text

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStorageStore } from '../store/storageStore';
-import { Database, Plus, Trash2, Download, Search, Settings } from 'lucide-react';
+import { Database, Plus, Trash2, Download, Search } from 'lucide-react';
 
 export const StorageConsole = () => {
   const {
@@ -61,12 +61,34 @@ export const StorageConsole = () => {
     }
   };
 
+  const inputStyle = {
+    width: '100%',
+    backgroundColor: '#141417',
+    border: '1px solid #2e2e38',
+    borderRadius: '0.25rem',
+    padding: '0.5rem',
+    color: '#ffffff',
+    fontSize: '0.875rem',
+    outline: 'none',
+    boxSizing: 'border-box',
+  };
+
+  const modalStyle = {
+    backgroundColor: '#1e1e24',
+    border: '1px solid #3e3e4a',
+    borderRadius: '0.5rem',
+    width: '100%',
+    maxWidth: '28rem',
+    padding: '1.5rem',
+    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+  };
+
   return (
-    <div className="bg-[#1e1e24] border-b border-[#2e2e38] p-4 text-white">
+    <div style={{ backgroundColor: '#1e1e24', borderBottom: '1px solid #2e2e38', padding: '1rem', color: '#fff' }}>
       {/* StorageTargetActionStrip */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <Database className="w-5 h-5 text-emerald-400" />
+          <Database style={{ width: '1.25rem', height: '1.25rem', color: '#34d399' }} />
           <span className="font-semibold text-sm tracking-wider uppercase text-emerald-400">
             Storage Target Action Strip
           </span>
@@ -74,39 +96,43 @@ export const StorageConsole = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setDbModalOpen(true)}
-            className="times-12 flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded transition"
+            className="times-12 flex items-center gap-1-5 px-3 py-1-5 bg-emerald-600 text-white rounded transition"
+            style={{ cursor: 'pointer' }}
           >
-            <Plus className="w-4 h-4" /> Connect Storage Target
+            <Plus style={{ width: '1rem', height: '1rem' }} /> Connect Storage Target
           </button>
           
           <button
             onClick={() => setStoreModalOpen(true)}
-            className="times-12 flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded transition"
+            className="times-12 flex items-center gap-1-5 px-3 py-1-5 bg-blue-600 text-white rounded transition"
+            style={{ cursor: 'pointer' }}
           >
-            <Plus className="w-4 h-4" /> Create Object Store
+            <Plus style={{ width: '1rem', height: '1rem' }} /> Create Object Store
           </button>
 
           <button
             onClick={purgeDatabase}
-            className="times-12 flex items-center gap-1.5 px-3 py-1.5 bg-rose-700 hover:bg-rose-600 text-white rounded transition"
+            className="times-12 flex items-center gap-1-5 px-3 py-1-5 bg-rose-700 text-white rounded transition"
+            style={{ cursor: 'pointer' }}
           >
-            <Trash2 className="w-4 h-4" /> Purge Database Instance
+            <Trash2 style={{ width: '1rem', height: '1rem' }} /> Purge Database Instance
           </button>
 
           <button
             onClick={handleExport}
-            className="times-12 flex items-center gap-1.5 px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-white rounded transition"
+            className="times-12 flex items-center gap-1-5 px-3 py-1-5 bg-zinc-700 text-white rounded transition"
+            style={{ cursor: 'pointer' }}
           >
-            <Download className="w-4 h-4" /> Export Schema JSON
+            <Download style={{ width: '1rem', height: '1rem' }} /> Export Schema JSON
           </button>
         </div>
       </div>
 
       {/* QueryConfigurationForm */}
-      <div className="flex flex-wrap items-center gap-4 bg-[#141417] p-3 rounded border border-[#23232a]">
+      <div className="flex flex-wrap items-center gap-4 bg-app-base p-3 rounded" style={{ border: '1px solid #23232a' }}>
         <div className="flex items-center gap-2">
           <span className="text-xs uppercase text-zinc-400 font-semibold">Engine:</span>
-          <div className="flex bg-[#23232a] rounded p-0.5 border border-[#2e2e38]">
+          <div className="flex bg-app-panel rounded p-1-5" style={{ border: '1px solid #2e2e38' }}>
             {['indexedDB', 'localStorage', 'sessionStorage'].map((type) => (
               <button
                 key={type}
@@ -114,8 +140,9 @@ export const StorageConsole = () => {
                 className={`times-12 px-3 py-1 rounded transition capitalize ${
                   activeDbType === type
                     ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'text-zinc-400 hover:text-white'
+                    : 'text-zinc-400'
                 }`}
+                style={{ cursor: 'pointer' }}
               >
                 {type === 'indexedDB' ? 'IndexedDB' : type === 'localStorage' ? 'Local Storage' : 'Session Storage'}
               </button>
@@ -123,8 +150,8 @@ export const StorageConsole = () => {
           </div>
         </div>
 
-        <div className="flex-1 flex items-center gap-2 bg-[#23232a] border border-[#2e2e38] rounded px-3 py-1">
-          <Search className="w-4 h-4 text-zinc-500" />
+        <div className="flex-1 flex items-center gap-2 bg-app-panel rounded px-3 py-1" style={{ border: '1px solid #2e2e38' }}>
+          <Search style={{ width: '1rem', height: '1rem', color: '#71717a' }} />
           <input
             type="text"
             value={searchVal}
@@ -133,15 +160,15 @@ export const StorageConsole = () => {
               setSearchQuery(e.target.value);
             }}
             placeholder="Custom index filter search / run key query instantly..."
-            className="w-full bg-transparent text-sm text-white focus:outline-none placeholder-zinc-500"
+            style={{ width: '100%', background: 'transparent', fontSize: '0.875rem', color: '#fff', outline: 'none', border: 'none' }}
           />
         </div>
       </div>
 
       {/* Database Connect Target Modal */}
       {dbModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#1e1e24] border border-[#3e3e4a] rounded-lg w-full max-w-md p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-modal backdrop-blur-sm">
+          <div style={modalStyle}>
             <h3 className="text-lg font-medium text-emerald-400 mb-4">Connect New Storage Target / Database</h3>
             <form onSubmit={handleCreateDb} className="space-y-4">
               <div>
@@ -152,7 +179,7 @@ export const StorageConsole = () => {
                   placeholder="e.g. RetailDB"
                   value={newDbName}
                   onChange={(e) => setNewDbName(e.target.value)}
-                  className="w-full bg-[#141417] border border-[#2e2e38] rounded p-2 text-white text-sm focus:outline-emerald-500"
+                  style={inputStyle}
                 />
               </div>
               
@@ -164,7 +191,7 @@ export const StorageConsole = () => {
                   placeholder="e.g. users"
                   value={newStoreName}
                   onChange={(e) => setNewStoreName(e.target.value)}
-                  className="w-full bg-[#141417] border border-[#2e2e38] rounded p-2 text-white text-sm focus:outline-emerald-500"
+                  style={inputStyle}
                 />
               </div>
 
@@ -176,7 +203,7 @@ export const StorageConsole = () => {
                   placeholder="e.g. id"
                   value={keyPath}
                   onChange={(e) => setKeyPath(e.target.value)}
-                  className="w-full bg-[#141417] border border-[#2e2e38] rounded p-2 text-white text-sm focus:outline-emerald-500"
+                  style={inputStyle}
                 />
               </div>
 
@@ -184,13 +211,15 @@ export const StorageConsole = () => {
                 <button
                   type="button"
                   onClick={() => setDbModalOpen(false)}
-                  className="times-12 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded"
+                  className="times-12 px-4 py-2 bg-zinc-800 text-white rounded"
+                  style={{ cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="times-12 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded font-medium"
+                  className="times-12 px-4 py-2 bg-emerald-600 text-white rounded font-medium"
+                  style={{ cursor: 'pointer' }}
                 >
                   Connect
                 </button>
@@ -202,8 +231,8 @@ export const StorageConsole = () => {
 
       {/* Create Store Modal */}
       {storeModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#1e1e24] border border-[#3e3e4a] rounded-lg w-full max-w-md p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-modal backdrop-blur-sm">
+          <div style={modalStyle}>
             <h3 className="text-lg font-medium text-emerald-400 mb-4">Create New Object Store / Virtual Table</h3>
             <form onSubmit={handleCreateStore} className="space-y-4">
               <div>
@@ -214,7 +243,7 @@ export const StorageConsole = () => {
                   placeholder="e.g. orders"
                   value={newStoreName}
                   onChange={(e) => setNewStoreName(e.target.value)}
-                  className="w-full bg-[#141417] border border-[#2e2e38] rounded p-2 text-white text-sm focus:outline-emerald-500"
+                  style={inputStyle}
                 />
               </div>
 
@@ -226,7 +255,7 @@ export const StorageConsole = () => {
                   placeholder="e.g. id"
                   value={keyPath}
                   onChange={(e) => setKeyPath(e.target.value)}
-                  className="w-full bg-[#141417] border border-[#2e2e38] rounded p-2 text-white text-sm focus:outline-emerald-500"
+                  style={inputStyle}
                 />
               </div>
 
@@ -234,13 +263,15 @@ export const StorageConsole = () => {
                 <button
                   type="button"
                   onClick={() => setStoreModalOpen(false)}
-                  className="times-12 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded"
+                  className="times-12 px-4 py-2 bg-zinc-800 text-white rounded"
+                  style={{ cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="times-12 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded font-medium"
+                  className="times-12 px-4 py-2 bg-blue-600 text-white rounded font-medium"
+                  style={{ cursor: 'pointer' }}
                 >
                   Create Store
                 </button>
