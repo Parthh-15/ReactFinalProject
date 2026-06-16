@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useStorageStore } from '../store/storageStore';
 import { Database, Plus, Trash2, Download, Search } from 'lucide-react';
 
 export const StorageConsole = () => {
   const {
     activeDbType,
-    activeDbName,
-    activeStoreName,
     setActiveDbType,
-    setActiveDbName,
     createNewDatabase,
     createObjectStore,
     purgeDatabase,

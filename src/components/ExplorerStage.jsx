@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useStorageStore } from '../store/storageStore';
 import { ChevronRight, ChevronDown, Table, Key, Link as LinkIcon, Edit3, Trash2, Plus, RefreshCw, Layers } from 'lucide-react';
 
@@ -242,8 +242,9 @@ const DatabaseDataMatrixSpreadsheet = ({
       if (editingValue.startsWith('{') || editingValue.startsWith('[')) {
         parsedVal = JSON.parse(editingValue);
       }
-    } catch {}
-
+    } catch (_e) {
+      // Intentionally silent: value may not be valid JSON
+    }
     const updatedRecord = { ...originalRecord, [colKey]: parsedVal };
     
     // In LocalStorage, virtual tables use 'key' and 'value' structure

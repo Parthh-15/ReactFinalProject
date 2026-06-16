@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useStorageStore } from './store/storageStore';
 import { seedMockData } from './utils/dbInitializer';
 import { StorageConsole } from './components/StorageConsole';

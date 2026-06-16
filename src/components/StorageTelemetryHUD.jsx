@@ -1,12 +1,9 @@
-import React from 'react';
 import { useStorageStore } from '../store/storageStore';
 import { Terminal, HardDrive, Cpu, Activity, Download } from 'lucide-react';
 
 export const StorageTelemetryHUD = () => {
   const {
     totalCalculatedWeightBytes,
-    globalUsageBytes,
-    globalQuotaBytes,
     quotaMarginPercentage,
     telemetryLogs,
     relationships,
@@ -28,8 +25,6 @@ export const StorageTelemetryHUD = () => {
 
   // Convert bytes to KB
   const totalWeightKB = (totalCalculatedWeightBytes / 1024).toFixed(3);
-  const globalUsageKB = (globalUsageBytes / 1024).toFixed(3);
-  const globalQuotaMB = (globalQuotaBytes / (1024 * 1024)).toFixed(1);
 
   // Latest transaction latency
   const latestLog = telemetryLogs[0];

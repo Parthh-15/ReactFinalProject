@@ -146,7 +146,7 @@ export const useStorageStore = create((set, get) => {
             if (parsed && typeof parsed === 'object') {
               Object.keys(parsed).forEach((k) => storeMap[tableName].add(k));
             }
-          } catch {}
+          } catch (_e) { /* silent: value may not be JSON */ }
         }
 
         const stores = Object.keys(storeMap).map((storeName) => ({
@@ -290,7 +290,7 @@ export const useStorageStore = create((set, get) => {
               let parsedVal = val;
               try {
                 parsedVal = JSON.parse(val);
-              } catch {}
+              } catch (_e) { /* silent: value may not be JSON */ }
 
               loaded.push({
                 key: key.includes('::') ? key.split('::').slice(1).join('::') : key,
@@ -301,7 +301,7 @@ export const useStorageStore = create((set, get) => {
           }
         } else if (type === 'indexedDB') {
           const db = await openDatabase(dbName);
-          const { result, latency } = await executeTransaction(db, storeName, 'readonly', async (stores) => {
+          const { result } = await executeTransaction(db, storeName, 'readonly', async (stores) => {
             return await getAllRecordsWithCursor(stores[storeName]);
           });
           loaded = result;
@@ -357,7 +357,7 @@ export const useStorageStore = create((set, get) => {
           const db = await openDatabase(dbName);
           await executeTransaction(db, storeName, 'readwrite', (stores) => {
             // Strip client-side ID key if it exists
-            const { __id, ...pureRecord } = recordData;
+            const { __id: _id, ...pureRecord } = recordData;
             stores[storeName].put(pureRecord);
           });
           db.close();
@@ -527,8 +527,6 @@ export const useStorageStore = create((set, get) => {
 
       // 1. Calculate active table bytes from list
       const type = get().activeDbType;
-      const dbName = get().activeDbName;
-      const storeName = get().activeStoreName;
 
       // Calculate weight of all records in currently connected stores for active db type
       if (type === 'localStorage' || type === 'sessionStorage') {
@@ -625,7 +623,7 @@ export const useStorageStore = create((set, get) => {
             
             const val = storageInstance.getItem(key);
             let parsed = val;
-            try { parsed = JSON.parse(val); } catch {}
+            try { parsed = JSON.parse(val); } catch (_e) { /* silent: value may not be JSON */ }
             
             storeMap[tableName].push({
               key: key.includes('::') ? key.split('::').slice(1).join('::') : key,

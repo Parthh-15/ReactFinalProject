@@ -55,7 +55,7 @@ export const executeTransaction = async (db, storeNames, mode = 'readonly', call
       reject(event.target.error);
     };
 
-    tx.onabort = (event) => {
+    tx.onabort = (_event) => {
       reject(new Error('Transaction aborted'));
     };
   });

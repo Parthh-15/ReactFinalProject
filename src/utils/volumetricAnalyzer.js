@@ -20,13 +20,13 @@ export const calculateStringByteWeight = (str) => {
  */
 export const calculateRecordByteWeight = (key, val) => {
   const keyStr = typeof key === 'string' ? key : String(key);
-  let valStr = '';
+  let valStr;
   if (typeof val === 'string') {
     valStr = val;
   } else {
     try {
-      valStr = JSON.stringify(val) || '';
-    } catch {
+      valStr = JSON.stringify(val) ?? '';
+    } catch (_e) {
       valStr = '';
     }
   }
@@ -44,7 +44,7 @@ export const calculateCollectionWeight = (records, keyPath = 'id') => {
     // Determine the key
     const key = record[keyPath] !== undefined ? record[keyPath] : '';
     // Exclude special wrapper field `__id` when stringifying value for precise weight
-    const { __id, ...pureRecord } = record;
+    const { __id: _id, ...pureRecord } = record;
     totalBytes += calculateRecordByteWeight(key, pureRecord);
   });
   
