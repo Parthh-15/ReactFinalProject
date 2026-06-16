@@ -1,0 +1,212 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  background-color: #0c0c0e;
+  color: #f4f4f5;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: #0c0c0e;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #101014;
+}
+::-webkit-scrollbar-thumb {
+  background: #2e2e38;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4e4e5a;
+}
+
+/* Strict Times New Roman 12pt Typography Constraint class */
+.times-12 {
+  font-family: 'Times New Roman', Times, 'TimesNewRoman', Georgia, serif !important;
+  font-size: 12pt !important;
+  font-weight: normal;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* Specific styling for data cell contents, buttons and percentages */
+table th.times-12 {
+  font-weight: bold !important;
+}
+
+input.times-12, button.times-12, textarea.times-12 {
+  font-family: 'Times New Roman', Times, 'TimesNewRoman', Georgia, serif !important;
+  font-size: 12pt !important;
+}
+
+/* Flexbox and Layout Utilities in Vanilla CSS */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; }
+.shrink-0 { flex-shrink: 0; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.justify-center { justify-content: center; }
+.align-items-stretch { align-items: stretch; }
+
+.gap-1 { gap: 0.25rem; }
+.gap-1.5 { gap: 0.375rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+
+.grid { display: grid; }
+.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.divide-x > * + * { border-left-width: 1px; }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.h-screen { height: 100vh; }
+.h-64 { height: 16rem; }
+.w-80 { width: 20rem; }
+.max-w-md { max-w: 28rem; }
+.max-w-2xl { max-w: 42rem; }
+.max-w-xs { max-w: 20rem; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.p-0.5 { padding: 0.125rem; }
+.p-1 { padding: 0.25rem; }
+.p-1.5 { padding: 0.375rem; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.p-8 { padding: 2rem; }
+.px-2.5 { padding-left: 0.625rem; padding-right: 0.625rem; }
+.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+.py-1.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.pl-1 { padding-left: 0.25rem; }
+.pl-5 { padding-left: 1.25rem; }
+.pl-6 { padding-left: 1.5rem; }
+.pr-1 { padding-right: 0.25rem; }
+.pb-1 { padding-bottom: 0.25rem; }
+.pt-2 { padding-top: 0.5rem; }
+
+.m-4 { margin: 1rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.ml-2 { margin-left: 0.5rem; }
+.ml-3.5 { margin-left: 0.875rem; }
+.mt-1 { margin-top: 0.25rem; }
+
+.overflow-hidden { overflow: hidden; }
+.overflow-y-auto { overflow-y: auto; }
+.overflow-x-auto { overflow-x: auto; }
+.overflow-visible { overflow: visible; }
+
+.bg-emerald-600 { background-color: #059669; }
+.bg-emerald-600:hover { background-color: #059669ee; }
+.bg-blue-600 { background-color: #2563eb; }
+.bg-rose-700 { background-color: #be123c; }
+.bg-zinc-700 { background-color: #3f3f46; }
+.bg-zinc-800 { background-color: #27272a; }
+.bg-zinc-850 { background-color: #202023; }
+.bg-[#1e1e24] { background-color: #1e1e24; }
+.bg-[#141417] { background-color: #141417; }
+.bg-[#23232a] { background-color: #23232a; }
+.bg-[#1a1a20] { background-color: #1a1a20; }
+.bg-[#101014] { background-color: #101014; }
+.bg-[#16161b] { background-color: #16161b; }
+.bg-[#0c0c0e] { background-color: #0c0c0e; }
+.bg-[#0c0c0e] { background-color: #0c0c0e; }
+.bg-[#121216] { background-color: #121216; }
+.bg-black\/60 { background-color: rgba(0, 0, 0, 0.6); }
+
+.text-white { color: #ffffff; }
+.text-emerald-400 { color: #34d399; }
+.text-emerald-300 { color: #6ee7b7; }
+.text-blue-500 { color: #3b82f6; }
+.text-amber-500 { color: #f59e0b; }
+.text-amber-400 { color: #fbbf24; }
+.text-cyan-400 { color: #22d3ee; }
+.text-violet-400 { color: #a78bfa; }
+.text-zinc-300 { color: #d4d4d8; }
+.text-zinc-400 { color: #a1a1aa; }
+.text-zinc-500 { color: #71717a; }
+.text-rose-500 { color: #f43f5e; }
+.text-green-500 { color: #22c55e; }
+
+.border { border: 1px solid #2e2e38; }
+.border-b { border-bottom: 1px solid #2e2e38; }
+.border-r { border-r: 1px solid #2e2e38; }
+.border-t { border-top: 1px solid #2e2e38; }
+.border-l { border-left: 1px solid #2e2e38; }
+
+.rounded { border-radius: 0.25rem; }
+.rounded-lg { border-radius: 0.5rem; }
+
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+.font-medium { font-weight: 500; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+.text-lg { font-size: 1.125rem; }
+
+.tracking-wider { letter-spacing: 0.05em; }
+.tracking-widest { letter-spacing: 0.1em; }
+.uppercase { text-transform: uppercase; }
+.capitalize { text-transform: capitalize; }
+.select-none { user-select: none; }
+.cursor-pointer { cursor: pointer; }
+.text-center { text-align: center; }
+.italic { font-style: italic; }
+
+.fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.z-50 { z-index: 50; }
+.backdrop-blur-sm { backdrop-filter: blur(4px); }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+
+/* Custom spreadsheet layouts */
+table {
+  width: 100%;
+  border-spacing: 0;
+}
+th, td {
+  padding: 8px;
+  vertical-align: middle;
+}
+
+/* Subtle glow animations and styles */
+.accent-glow {
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.terminal-glow {
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+

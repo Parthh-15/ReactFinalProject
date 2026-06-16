@@ -1,0 +1,567 @@
+import React, { useState } from 'react';
+import { useStorageStore } from '../store/storageStore';
+import { ChevronRight, ChevronDown, Table, Key, Link as LinkIcon, Edit3, Trash2, Plus, RefreshCw, Layers } from 'lucide-react';
+
+export const ExplorerStage = () => {
+  const {
+    databases,
+    activeDbType,
+    activeDbName,
+    activeStoreName,
+    setActiveDbName,
+    setActiveStoreName,
+    filteredRecords,
+    upsertRecord,
+    deleteRecord,
+    relationships,
+    refreshRecords,
+  } = useStorageStore();
+
+  const [activeTab, setActiveTab] = useState('spreadsheet'); // 'spreadsheet' | 'schema-graph'
+
+  // Selected database object
+  const currentDb = databases.find((d) => d.type === activeDbType && d.name === activeDbName);
+
+  return (
+    <div className="flex-1 flex overflow-hidden bg-[#141417] text-white">
+      {/* SchemaObjectTreeNavigator (Left Pane) */}
+      <div className="w-80 border-r border-[#2e2e38] flex flex-col bg-[#1a1a20]">
+        <div className="p-3 border-b border-[#2e2e38] flex items-center justify-between">
+          <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+            Schema Navigator
+          </span>
+          <button 
+            onClick={refreshRecords}
+            className="p-1 hover:bg-[#2e2e38] rounded text-zinc-400 hover:text-emerald-400 transition"
+            title="Refresh active store records"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+          </button>
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-2">
+          {databases
+            .filter((db) => db.type === activeDbType)
+            .map((db) => (
+              <DatabaseNode
+                key={db.name}
+                db={db}
+                activeDbName={activeDbName}
+                activeStoreName={activeStoreName}
+                setActiveDbName={setActiveDbName}
+                setActiveStoreName={setActiveStoreName}
+              />
+            ))}
+
+          {databases.filter((db) => db.type === activeDbType).length === 0 && (
+            <div className="text-zinc-500 text-xs p-4 text-center">
+              No active databases/stores found for this target engine. Use the strip above to connect a target.
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Database Staging workspace / right canvas */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Toggle Workspace View */}
+        <div className="border-b border-[#2e2e38] bg-[#1a1a20] px-4 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-emerald-400 font-semibold text-xs tracking-widest uppercase">
+              {activeDbName ? `${activeDbName} > ${activeStoreName || 'Select Store'}` : 'Select Database'}
+            </span>
+          </div>
+
+          <div className="flex rounded p-0.5 bg-[#23232a] border border-[#2e2e38]">
+            <button
+              onClick={() => setActiveTab('spreadsheet')}
+              className={`times-12 px-3 py-1 rounded transition text-xs ${
+                activeTab === 'spreadsheet'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              Spreadsheet Data Grid
+            </button>
+            <button
+              onClick={() => setActiveTab('schema-graph')}
+              className={`times-12 px-3 py-1 rounded transition text-xs flex items-center gap-1 ${
+                activeTab === 'schema-graph'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              <Layers className="w-3 h-3" /> Relationship Graph
+            </button>
+          </div>
+        </div>
+
+        {/* Dynamic Inner Panel */}
+        <div className="flex-1 overflow-auto bg-[#141417]">
+          {activeTab === 'spreadsheet' ? (
+            <DatabaseDataMatrixSpreadsheet
+              records={filteredRecords}
+              dbName={activeDbName}
+              storeName={activeStoreName}
+              dbType={activeDbType}
+              currentDb={currentDb}
+              upsertRecord={upsertRecord}
+              deleteRecord={deleteRecord}
+            />
+          ) : (
+            <SchemaRelationshipGraph relationships={relationships} activeDbName={activeDbName} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* Database Tree Node Component */
+const DatabaseNode = ({ db, activeDbName, activeStoreName, setActiveDbName, setActiveStoreName }) => {
+  const [expanded, setExpanded] = useState(true);
+  const isSelected = activeDbName === db.name;
+
+  return (
+    <div className="mb-2">
+      <div
+        onClick={() => {
+          setActiveDbName(db.name);
+          setExpanded(!expanded);
+        }}
+        className={`flex items-center gap-1.5 p-1.5 rounded cursor-pointer transition ${
+          isSelected ? 'bg-zinc-800 text-emerald-400' : 'text-zinc-300 hover:bg-zinc-850'
+        }`}
+      >
+        {expanded ? <ChevronDown className="w-4 h-4 text-zinc-500" /> : <ChevronRight className="w-4 h-4 text-zinc-500" />}
+        <span className="times-12 font-bold select-none">{db.name}</span>
+        {db.error && <span className="text-[10px] text-rose-500 font-serif">(! error)</span>}
+      </div>
+
+      {expanded && (
+        <div className="pl-6 space-y-1 mt-1 border-l border-zinc-800 ml-3.5">
+          {db.stores?.map((store) => {
+            const isStoreSelected = activeStoreName === store.name && isSelected;
+            return (
+              <div key={store.name} className="group">
+                <div
+                  onClick={() => {
+                    setActiveDbName(db.name);
+                    setActiveStoreName(store.name);
+                  }}
+                  className={`flex items-center justify-between p-1.5 rounded cursor-pointer transition ${
+                    isStoreSelected ? 'bg-emerald-900/40 text-emerald-300 border border-emerald-800/40' : 'text-zinc-400 hover:bg-[#23232a]'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <Table className="w-3.5 h-3.5 text-zinc-500" />
+                    <span className="times-12">{store.name}</span>
+                  </div>
+                </div>
+
+                {isStoreSelected && (
+                  <div className="pl-5 pr-1 py-1 space-y-1 text-zinc-500 border-l border-zinc-700/60 ml-2">
+                    <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                      <Key className="w-3 h-3 text-amber-500" />
+                      <span className="times-12 text-zinc-400">PK: {String(store.keyPath)}</span>
+                    </div>
+                    {store.fields?.map((field) => (
+                      <div key={field} className="flex items-center justify-between text-[11px] font-mono hover:text-zinc-300 transition pl-1">
+                        <span className="times-12 text-zinc-500">{field}</span>
+                        {/* FK indicator if field name matches id pattern */}
+                        {/^(.*)(?:Id|_id|ID)$/.test(field) && (
+                          <LinkIcon className="w-2.5 h-2.5 text-blue-500" title="Relationship Candidate" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* Database spreadsheet view */
+const DatabaseDataMatrixSpreadsheet = ({
+  records,
+  dbName,
+  storeName,
+  dbType,
+  currentDb,
+  upsertRecord,
+  deleteRecord,
+}) => {
+  const [editingCell, setEditingCell] = useState(null); // { rowIndex, key }
+  const [editingValue, setEditingValue] = useState('');
+  const [showAddRow, setShowAddRow] = useState(false);
+  const [newRowPayload, setNewRowPayload] = useState('{\n  "id": "1",\n  "name": "New Record"\n}');
+
+  if (!dbName || !storeName) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-zinc-500 text-sm">
+        <Table className="w-12 h-12 text-zinc-600 mb-2" />
+        Please select a table/store from the Schema Navigator to explore records.
+      </div>
+    );
+  }
+
+  // Get active keyPath configurations
+  const storeMeta = currentDb?.stores?.find((s) => s.name === storeName);
+  const keyPath = storeMeta?.keyPath || 'id';
+
+  // Extract all columns
+  const allColumns = new Set();
+  // Always ensure keyPath is listed first
+  if (typeof keyPath === 'string') {
+    allColumns.add(keyPath);
+  } else {
+    allColumns.add('id');
+  }
+
+  records.forEach((rec) => {
+    Object.keys(rec).forEach((key) => {
+      if (key !== '__id') allColumns.add(key);
+    });
+  });
+
+  const columnsList = Array.from(allColumns);
+
+  // Handle saving of edited cells
+  const handleCellSave = async (rowIndex, colKey) => {
+    const originalRecord = records[rowIndex];
+    let parsedVal = editingValue;
+    try {
+      // Try to parse as JSON if it looks like JSON structure
+      if (editingValue.startsWith('{') || editingValue.startsWith('[')) {
+        parsedVal = JSON.parse(editingValue);
+      }
+    } catch {}
+
+    const updatedRecord = { ...originalRecord, [colKey]: parsedVal };
+    
+    // In LocalStorage, virtual tables use 'key' and 'value' structure
+    if (dbType === 'localStorage' || dbType === 'sessionStorage') {
+      const storageKey = originalRecord.key;
+      // Reassemble the object if columns are properties
+      if (colKey === 'key') {
+        // Renaming the key requires deleting old item and creating new one
+        await deleteRecord(originalRecord.__id);
+        await upsertRecord({ key: parsedVal, value: originalRecord.value });
+      } else if (colKey === 'value') {
+        await upsertRecord({ key: storageKey, value: parsedVal });
+      } else {
+        const newValue = { ...originalRecord.value, [colKey]: parsedVal };
+        await upsertRecord({ key: storageKey, value: newValue });
+      }
+    } else {
+      // IndexedDB
+      await upsertRecord(updatedRecord);
+    }
+    
+    setEditingCell(null);
+  };
+
+  const handleAddRowSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = JSON.parse(newRowPayload);
+      if (dbType === 'localStorage' || dbType === 'sessionStorage') {
+        const key = payload[keyPath] || Math.random().toString(36).substring(7);
+        await upsertRecord({ key, value: payload });
+      } else {
+        await upsertRecord(payload);
+      }
+      setShowAddRow(false);
+    } catch (err) {
+      alert('Invalid JSON: ' + err.message);
+    }
+  };
+
+  return (
+    <div className="p-4 space-y-4">
+      {/* Actions */}
+      <div className="flex items-center justify-between">
+        <span className="text-zinc-400 text-xs">
+          Displaying {records.length} items
+        </span>
+        <button
+          onClick={() => setShowAddRow(true)}
+          className="times-12 flex items-center gap-1.5 px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs transition"
+        >
+          <Plus className="w-3.5 h-3.5" /> Add Record
+        </button>
+      </div>
+
+      {/* Add Row Section */}
+      {showAddRow && (
+        <div className="bg-[#1e1e24] border border-[#2e2e38] rounded p-4 mb-4">
+          <h4 className="text-emerald-400 font-bold text-xs uppercase mb-2">Insert New Row (JSON schema format)</h4>
+          <form onSubmit={handleAddRowSubmit} className="space-y-3">
+            <textarea
+              value={newRowPayload}
+              onChange={(e) => setNewRowPayload(e.target.value)}
+              rows={5}
+              className="w-full font-mono text-xs bg-[#141417] border border-[#2e2e38] rounded p-2 text-emerald-300 focus:outline-emerald-500"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowAddRow(false)}
+                className="times-12 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs rounded"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="times-12 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs rounded"
+              >
+                Insert Record
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Spreadsheet grid table */}
+      <div className="overflow-x-auto border border-[#2e2e38] rounded">
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className="bg-[#1a1a20] border-b border-[#2e2e38]">
+              <th className="times-12 p-2 text-zinc-500 font-semibold border-r border-[#2e2e38] w-12 text-center">#</th>
+              {columnsList.map((col) => (
+                <th key={col} className="times-12 p-2 text-zinc-300 font-bold border-r border-[#2e2e38] select-none">
+                  {col}
+                </th>
+              ))}
+              <th className="times-12 p-2 text-zinc-500 font-semibold text-center w-20">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {records.map((record, rowIndex) => {
+              const recordId = record.__id;
+              
+              return (
+                <tr key={recordId || rowIndex} className="border-b border-[#2e2e38] hover:bg-[#1b1b21] transition">
+                  <td className="times-12 p-2 text-zinc-500 text-center border-r border-[#2e2e38] font-mono select-none">
+                    {rowIndex + 1}
+                  </td>
+                  
+                  {columnsList.map((col) => {
+                    const isEditing = editingCell?.rowIndex === rowIndex && editingCell?.key === col;
+                    let cellVal = record[col];
+
+                    // For LocalStorage virtual columns if nested value structure
+                    if (dbType === 'localStorage' || dbType === 'sessionStorage') {
+                      if (col !== 'key' && col !== 'value') {
+                        cellVal = record.value ? record.value[col] : undefined;
+                      }
+                    }
+
+                    const displayVal = cellVal !== undefined 
+                      ? (typeof cellVal === 'object' ? JSON.stringify(cellVal) : String(cellVal))
+                      : '';
+
+                    return (
+                      <td
+                        key={col}
+                        onDoubleClick={() => {
+                          setEditingCell({ rowIndex, key: col });
+                          setEditingValue(displayVal);
+                        }}
+                        className="times-12 p-2 border-r border-[#2e2e38] max-w-xs truncate relative group/cell cursor-pointer min-h-[36px]"
+                      >
+                        {isEditing ? (
+                          <div className="flex items-center gap-1.5">
+                            <textarea
+                              value={editingValue}
+                              onChange={(e) => setEditingValue(e.target.value)}
+                              onBlur={() => handleCellSave(rowIndex, col)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                  e.preventDefault();
+                                  handleCellSave(rowIndex, col);
+                                }
+                              }}
+                              autoFocus
+                              className="w-full p-1 bg-[#141417] border border-emerald-500 text-emerald-300 text-xs font-mono rounded resize-none"
+                              rows={2}
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between">
+                            <span className="font-mono">{displayVal}</span>
+                            <Edit3 className="w-3 h-3 text-zinc-600 opacity-0 group-hover/cell:opacity-100 transition absolute right-2" />
+                          </div>
+                        )}
+                      </td>
+                    );
+                  })}
+
+                  <td className="p-2 text-center">
+                    <button
+                      onClick={() => deleteRecord(recordId)}
+                      className="times-12 p-1 hover:bg-rose-950/40 text-rose-500 hover:text-rose-400 rounded transition"
+                      title="Delete this row"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 inline" />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+
+            {records.length === 0 && (
+              <tr>
+                <td colSpan={columnsList.length + 2} className="times-12 p-8 text-center text-zinc-500 italic">
+                  No records loaded. Double-click or click "Add Record" to populate records.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+/* SVG Relationship Graph */
+const SchemaRelationshipGraph = ({ relationships, activeDbName }) => {
+  const { nodes, edges } = relationships;
+  const filteredNodes = nodes.filter((n) => n.dbName === activeDbName);
+  const filteredEdges = edges.filter((e) => {
+    const srcNode = nodes.find((n) => n.id === e.source);
+    return srcNode && srcNode.dbName === activeDbName;
+  });
+
+  if (filteredNodes.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-zinc-500 text-sm">
+        <LinkIcon className="w-12 h-12 text-zinc-600 mb-2" />
+        No nodes found to visualize. Connect databases or create stores to map schema keys.
+      </div>
+    );
+  }
+
+  // Pre-arrange nodes in a circular or grid layout for the SVG container
+  const width = 600;
+  const height = 400;
+  const positions = {};
+
+  filteredNodes.forEach((node, idx) => {
+    const angle = (idx / filteredNodes.length) * 2 * Math.PI;
+    positions[node.id] = {
+      x: width / 2 + 160 * Math.cos(angle),
+      y: height / 2 + 120 * Math.sin(angle),
+    };
+  });
+
+  return (
+    <div className="p-6 flex flex-col items-center justify-center bg-[#141417]">
+      <h3 className="text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-4">
+        Interactive Relational Mapping Canvas ({filteredEdges.length} connections detected)
+      </h3>
+
+      <div className="w-full max-w-2xl bg-[#1a1a20] border border-[#2e2e38] rounded-lg p-4 relative overflow-hidden">
+        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
+          {/* Arrow markers for edges */}
+          <defs>
+            <marker
+              id="arrow"
+              viewBox="0 0 10 10"
+              refX="18"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" />
+            </marker>
+          </defs>
+
+          {/* Render Link Edges */}
+          {filteredEdges.map((edge) => {
+            const p1 = positions[edge.source];
+            const p2 = positions[edge.target];
+            if (!p1 || !p2) return null;
+
+            return (
+              <g key={edge.id}>
+                <line
+                  x1={p1.x}
+                  y1={p1.y}
+                  x2={p2.x}
+                  y2={p2.y}
+                  stroke="#10b981"
+                  strokeWidth="2"
+                  strokeDasharray="4"
+                  markerEnd="url(#arrow)"
+                  className="opacity-70 animate-pulse"
+                />
+                {/* Edge Label */}
+                <text
+                  x={(p1.x + p2.x) / 2}
+                  y={(p1.y + p2.y) / 2 - 8}
+                  fill="#60a5fa"
+                  fontSize="10"
+                  fontFamily="Times New Roman"
+                  textAnchor="middle"
+                  className="bg-[#141417] px-1 font-bold"
+                >
+                  {edge.sourceField} → {edge.targetField}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Render Table Nodes */}
+          {filteredNodes.map((node) => {
+            const pos = positions[node.id];
+            if (!pos) return null;
+
+            return (
+              <g key={node.id} transform={`translate(${pos.x}, ${pos.y})`} className="cursor-pointer">
+                <rect
+                  x="-75"
+                  y="-25"
+                  width="150"
+                  height="50"
+                  rx="6"
+                  fill="#1e1e24"
+                  stroke="#3e3e4a"
+                  strokeWidth="2"
+                  className="hover:stroke-emerald-400 hover:fill-[#25252e] transition"
+                />
+                {/* Table Header text */}
+                <text
+                  x="0"
+                  y="-5"
+                  fill="#10b981"
+                  fontSize="12"
+                  fontWeight="bold"
+                  fontFamily="Times New Roman"
+                  textAnchor="middle"
+                >
+                  {node.storeName}
+                </text>
+                {/* KeyPath description text */}
+                <text
+                  x="0"
+                  y="12"
+                  fill="#a1a1aa"
+                  fontSize="10"
+                  fontFamily="Times New Roman"
+                  textAnchor="middle"
+                >
+                  PK: {node.keyPath}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </div>
+  );
+};
